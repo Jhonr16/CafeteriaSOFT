@@ -8,6 +8,7 @@ import modelo.EstadoPedido;
 import modelo.ItemMenu;
 import modelo.MedioPago;
 import modelo.Pedido;
+import modelo.ProductoBase;
 import modelo.ResumenTurno;
 import modelo.TipoItem;
 import patron.EstacionCaja;
@@ -44,6 +45,24 @@ public class CafeteriaNucleo {
         this.notificacionServicio.suscribir(estacionCocina);
         this.notificacionServicio.suscribir(estacionCaja);
         this.notificacionServicio.suscribir(estacionMesero);
+    }
+
+    public ProductoBase crearProducto(String codigo, String nombre, double precioBase, TipoItem tipo, boolean disponible) {
+        if (codigo == null || codigo.isBlank()) {
+            throw new IllegalArgumentException("El código del producto es obligatorio.");
+        }
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("El nombre del producto es obligatorio.");
+        }
+        if (precioBase < 0) {
+            throw new IllegalArgumentException("El precio base no puede ser negativo.");
+        }
+        if (catalogoRepositorio.buscarPorCodigo(codigo.trim()).isPresent()) {
+            throw new IllegalArgumentException("Ya existe un producto con el código: " + codigo.trim());
+        }
+        ProductoBase nuevo = new ProductoBase(codigo.trim().toUpperCase(), nombre.trim(), precioBase, tipo, disponible);
+        catalogoRepositorio.guardar(nuevo);
+        return nuevo;
     }
 
     public List<ItemMenu> listarCatalogo() {
@@ -112,5 +131,30 @@ public class CafeteriaNucleo {
     private ItemMenu buscarItem(String codigo) {
         return catalogoRepositorio.buscarPorCodigo(codigo)
                 .orElseThrow(() -> new IllegalArgumentException("Código no encontrado en catálogo: " + codigo));
+    }
+
+    public ItemMenu actualizarProducto(String codigo, String nuevoNombre, Double nuevoPrecio, boolean disponible) {
+        if (codigo == null || codigo.isBlank()) {
+            throw new IllegalArgumentException("El código del producto es obligatorio.");
+        }
+        ItemMenu item = catalogoRepositorio.buscarPorCodigo(codigo.trim())
+                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con código: " + codigo.trim()));
+
+        if (nuevoNombre != null && !nuevoNombre.isBlank()) {
+            item.setNombre(nuevoNombre.trim());
+        }
+        if (nuevoPrecio != null) {
+            if (nuevoPrecio < 0) {
+                throw new IllegalArgumentException("El precio no puede ser negativo.");
+            }
+            item.setPrecioBase(nuevoPrecio);
+        }
+        item.setDisponible(disponible);
+        return item;
+    }
+    public ItemMenu personalizarConItems(String codigoBase, List<ItemMenu> adiciones) {
+        ItemMenu base = catalogoRepositorio.buscarPorCodigo(codigoBase)
+                .orElseThrow(() -> new IllegalArgumentException("Producto no existe: " + codigoBase));
+        return personalizacionServicio.aplicarAdicionesConItems(base, adiciones);
     }
 }

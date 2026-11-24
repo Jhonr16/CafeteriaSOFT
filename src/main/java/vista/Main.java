@@ -6,16 +6,16 @@ import servicio.CafeteriaNucleo;
 public class Main {
     public static void main(String[] args) {
         CafeteriaNucleo nucleo = new CafeteriaNucleo();
-        boolean usarGui = args.length > 0 && args[0].equalsIgnoreCase("--gui");
+        boolean usarConsola = args.length > 0 && args[0].equalsIgnoreCase("--consola");
 
-        if (usarGui) {
+        if (usarConsola) {
+            ConsolaApp consola = new ConsolaApp(nucleo);
+            consola.ejecutar();
+        } else {
             SwingUtilities.invokeLater(() -> {
                 VentanaApp ventana = new VentanaApp(nucleo);
                 ventana.setVisible(true);
             });
-        } else {
-            ConsolaApp consola = new ConsolaApp(nucleo);
-            consola.ejecutar();
         }
     }
 }

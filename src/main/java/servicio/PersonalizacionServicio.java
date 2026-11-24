@@ -2,6 +2,7 @@ package servicio;
 
 import java.util.List;
 import modelo.ItemMenu;
+import patron.AdicionDecorator;
 import patron.ExtraShotEspressoDecorator;
 import patron.LecheAlmendraDecorator;
 import patron.QuesoExtraDecorator;
@@ -27,6 +28,16 @@ public class PersonalizacionServicio {
                 case "ADD_QUESO" -> new QuesoExtraDecorator(actual);
                 default -> throw new IllegalArgumentException("Código de adición no válido: " + codigo);
             };
+        }
+        return actual;
+    }
+
+    public ItemMenu aplicarAdicionesConItems(ItemMenu base, List<ItemMenu> adicionesSeleccionadas) {
+        validarDisponibilidad(base);
+        ItemMenu actual = base;
+        for (ItemMenu adicion : adicionesSeleccionadas) {
+            validarDisponibilidad(adicion);
+            actual = new AdicionDecorator(actual, adicion.getNombre(), adicion.calcularPrecio()) { };
         }
         return actual;
     }
