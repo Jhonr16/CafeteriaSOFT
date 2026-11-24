@@ -1,6 +1,6 @@
 # CafeteriaSOFT
 
-Sistema de gestión para cafetería desarrollado en *Java (JDK 27)* con arquitectura en capas, núcleo independiente, interfaz dual (*Consola* y *Swing GUI) y patrones de diseño **Decorator, **Strategy* y *Observer*.
+Sistema de gestión para cafetería desarrollado en *Java (JDK 27)* con arquitectura en capas, núcleo independiente, interfaz dual (*Consola* y *Swing GUI*) y patrones de diseño *Decorator*, *Strategy* y *Observer*.
 
 ## Funcionalidades implementadas
 - *RF01*: Catálogo de platos, bebidas, acompañamientos, postres y precios.
